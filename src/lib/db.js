@@ -5,7 +5,7 @@ import { dirname, join } from "node:path";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const dbPath = join(__dirname, "/var/www/R314-eval/data/clients.db");
+const dbPath = join(__dirname, "..", "..", "data", "clients.db");
 
 const db = new Database(dbPath);
 
