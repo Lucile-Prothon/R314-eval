@@ -469,6 +469,19 @@ const locationsCount = clients.filter(
       </div>
     </div>
 
+    <div class="user-area">
+      <div class="user-info">
+        <div class="user-name">{Astro.locals.user?.name ?? "Connecté"}</div>
+        {Astro.locals.user?.email && (
+          <div class="user-email">{Astro.locals.user.email}</div>
+        )}
+      </div>
+      <button class="logout" id="logout-button" type="button">
+        Se déconnecter
+      </button>
+      <span id="auth-error" role="alert" aria-live="polite"></span>
+    </div>
+
   </header>
   <main>
 
@@ -674,6 +687,31 @@ const locationsCount = clients.filter(
     crossorigin=""
   ></script>
 
+  <script>
+    import { authClient } from "../lib/auth-client";
+
+    const logoutButton = document.querySelector<HTMLButtonElement>("#logout-button");
+    const authError = document.querySelector<HTMLSpanElement>("#auth-error");
+
+    logoutButton?.addEventListener("click", async () => {
+      if (!logoutButton || !authError) return;
+
+      logoutButton.disabled = true;
+      authError.textContent = "";
+
+      try {
+        const result = await authClient.signOut();
+        if (result.error) {
+          throw new Error(result.error.message || "La déconnexion a échoué.");
+        }
+        window.location.assign("/login");
+      } catch (error) {
+        authError.textContent =
+          error instanceof Error ? error.message : "Impossible de se déconnecter.";
+        logoutButton.disabled = false;
+      }
+    });
+  </script>
 
   <script define:vars={{ clients }}>
 

@@ -9,7 +9,8 @@
     "preview": "astro preview",
     "start": "bun ./dist/server/entry.mjs",
     "db:init": "bun scripts/init-db.mjs",
-    "db:seed": "bun scripts/seed-db.mjs"
+    "db:seed": "bun scripts/seed-db.mjs",
+    "auth:migrate": "bunx --bun auth@latest migrate --config src/lib/auth.ts --yes"
   },
   "dependencies": {
     "@astrojs/node": "^11.1.5",

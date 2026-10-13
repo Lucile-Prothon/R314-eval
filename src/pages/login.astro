@@ -1,0 +1,110 @@
+---
+export const prerender = false;
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Connexion | Clients</title>
+    <style>
+      :root {
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+        color: #172033;
+        background: #f5f7fb;
+      }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        display: grid;
+        place-items: center;
+      }
+
+      main {
+        width: min(380px, calc(100% - 40px));
+        padding: 36px;
+        border: 1px solid #e7ebf2;
+        border-radius: 18px;
+        background: white;
+        box-shadow: 0 8px 30px rgb(15 23 42 / 7%);
+        text-align: center;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: 24px;
+      }
+
+      p {
+        margin: 0 0 24px;
+        color: #718096;
+        font-size: 14px;
+      }
+
+      button {
+        width: 100%;
+        padding: 12px 16px;
+        border: 0;
+        border-radius: 10px;
+        background: #172033;
+        color: white;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      button:disabled {
+        cursor: wait;
+        opacity: 0.7;
+      }
+
+      #auth-error {
+        margin-top: 16px;
+        color: #b91c1c;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Connexion</h1>
+      <p>Connectez-vous avec GitHub pour accéder au tableau de bord.</p>
+      <button id="github-sign-in" type="button">Continuer avec GitHub</button>
+      <div id="auth-error" role="alert" aria-live="polite"></div>
+    </main>
+
+    <script>
+      import { authClient } from "../lib/auth-client";
+
+      const button = document.querySelector<HTMLButtonElement>("#github-sign-in");
+      const errorMessage = document.querySelector<HTMLDivElement>("#auth-error");
+
+      button?.addEventListener("click", async () => {
+        if (!button || !errorMessage) return;
+
+        button.disabled = true;
+        errorMessage.textContent = "";
+
+        try {
+          const result = await authClient.signIn.social({
+            provider: "github",
+            callbackURL: "/",
+          });
+
+          if (result.error) {
+            throw new Error(result.error.message || "La connexion GitHub a échoué.");
+          }
+        } catch (error) {
+          errorMessage.textContent =
+            error instanceof Error
+              ? error.message
+              : "Impossible de démarrer la connexion GitHub.";
+          button.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>
